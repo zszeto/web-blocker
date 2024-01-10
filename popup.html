@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EduBlock Extension Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            width: 400px;
+            margin: 20px;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 20px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>EduBlock Settings</h2>
+
+        <div class="form-group">
+            <label for="topic">Topic of Focus</label>
+            <textarea id="topic" name="topic" placeholder="Enter the topic of focus"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="websites">Websites to Ignore:</label>
+            <textarea id="websites" name="websites" placeholder="Enter websites to ignore, separated by commas..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="apiKey">API Key:</label>
+            <input type="text" id="apiKey" name="apiKey" placeholder="Enter your API key...">
+        </div>
+
+        <input type="submit" id="saveButton" value="Save Settings">
+        <div id="status"></div>
+    </div>
+    <script>src="popup.js"</script>
+</body>
+</html>

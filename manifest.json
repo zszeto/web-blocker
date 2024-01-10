@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "EduBlock",
+  "description": "An NLP-based web blocker for enhanced student focus",
+  "version": "1.0",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "images/logo.png"
+  },
+  "permissions": ["webRequest", "webRequestBlocking", "storage", "tabs"],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/content.js"]
+    }
+  ]
+}
