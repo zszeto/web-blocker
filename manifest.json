@@ -5,13 +5,36 @@
   "version": "1.0",
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "images/logo.png"
+    "default_icon": "images/logo.png",
+    "default_title": "EduBlock"
   },
-  "permissions": ["webRequest", "webRequestBlocking", "storage", "tabs"],
+  "permissions": [
+    "webRequest",
+    "storage",
+    "tabs"
+  ],
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["js/content.js"]
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
     }
-  ]
+  ],
+  "host_permissions": [
+    "https://api.openai.com/"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "images/*.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "options_page": "options.html"
 }
