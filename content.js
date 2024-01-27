@@ -11,8 +11,45 @@ chrome.storage.sync.get(['domainsToIgnore', 'websitesToIgnore'], function (data)
     checkRelevance();
 });
 
-function checkRelevance() {
-    showOverlay();
+async function checkRelevance() {
+    chrome.storage.sync.get(['topic', 'apiKey'], async function (result) {
+        let pageContent = document.body.innerText;
+        if (pageContent.length > 5000) {
+            pageContent = pageContent.substring(0, 5000);
+        }
+        const url = window.location.href;
+        const topic = result.topic;
+        const apiKey = result.apiKey;
+        const prompt = `Is the following text on ${url} relevant to ${topic}? Begin your response with “Yes” or “No” and follow with a justification. \n\n${pageContent}`;
+
+        try {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-3.5-turbo',
+                    messages: [
+                        {
+                            role: 'user',
+                            content: prompt
+                        }
+                    ],
+                    max_tokens: 50,
+                })
+            });
+
+            const data = await response.json();
+            console.log(data);
+            if (data.choices && data.choices[0] && data.choices[0].message.content.trim().startsWith("No")) {
+                showOverlay();
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
 }
 
 function showOverlay() {
