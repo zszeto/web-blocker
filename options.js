@@ -9,7 +9,7 @@ const saveOptions = () => {
         'topic': topic,
         'domainsToIgnore': domains,
         'websitesToIgnore': websites,
-        'apiKey': apiKey
+        'apiKey': apiKey,
     }, function () {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
@@ -27,14 +27,23 @@ const restoreOptions = () => {
         'topic': '',
         'domainsToIgnore': [],
         'websitesToIgnore': [],
-        'apiKey': ''
+        'apiKey': '',
+        'blocked': ''
     }, function (items) {
         document.getElementById('topic').value = items.topic;
         document.getElementById('domains').value = items.domainsToIgnore.join(', ');
         document.getElementById('websites').value = items.websitesToIgnore.join(', ');
         document.getElementById('apiKey').value = items.apiKey;
+        document.getElementById('blocked').textContent = items.blocked || 0;
     });
 };
+
+// Resets number of sites blocked
+document.getElementById('resetCount').addEventListener('click', function () {
+    chrome.storage.sync.set({ 'blocked': 0 }, function () {
+        document.getElementById('blocked').textContent = 0;
+    });
+});
 
 document.addEventListener('DOMContentLoaded', restoreOptions);
 document.getElementById('save').addEventListener('click', saveOptions);

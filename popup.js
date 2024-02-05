@@ -37,28 +37,32 @@ function loadOptions() {
 
 function ignoreDomain() {
     chrome.storage.sync.get(['domainsToIgnore'], function (result) {
-        const currentDomain = window.location.hostname;
-        const updatedList = [...result.domainsToIgnore, currentDomain];
-        chrome.storage.sync.set({ 'domainsToIgnore': updatedList }, function () {
-            var status = document.getElementById('status');
-            status.textContent = 'Domain saved';
-            setTimeout(function () {
-                status.textContent = '';
-            }, 750);
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            const currentDomain = tabs[0].hostname;
+            const updatedList = [...result.domainsToIgnore, currentDomain];
+            chrome.storage.sync.set({ 'domainsToIgnore': updatedList }, function () {
+                var status = document.getElementById('status');
+                status.textContent = 'Domain saved';
+                setTimeout(function () {
+                    status.textContent = '';
+                }, 750);
+            });
         });
     });
 }
 
 function ignoreURL() {
     chrome.storage.sync.get(['websitesToIgnore'], function (result) {
-        const currentURL = window.location.href;
-        const updatedList = [...result.websitesToIgnore, currentURL];
-        chrome.storage.sync.set({ 'websitesToIgnore': updatedList }, function () {
-            var status = document.getElementById('status');
-            status.textContent = 'URL saved';
-            setTimeout(function () {
-                status.textContent = '';
-            }, 750);
+        chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            let currentURL = tabs[0].url;
+            const updatedList = [...result.websitesToIgnore, currentURL];
+            chrome.storage.sync.set({ 'websitesToIgnore': updatedList }, function () {
+                var status = document.getElementById('status');
+                status.textContent = 'URL saved';
+                setTimeout(function () {
+                    status.textContent = '';
+                }, 750);
+            });
         });
     });
 }

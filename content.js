@@ -12,6 +12,7 @@ chrome.storage.sync.get(['domainsToIgnore', 'websitesToIgnore'], function (data)
 });
 
 async function checkRelevance() {
+    /*
     chrome.storage.sync.get(['topic', 'apiKey'], async function (result) {
         let pageContent = document.body.innerText;
         if (pageContent.length > 5000) {
@@ -50,6 +51,13 @@ async function checkRelevance() {
             console.error('Error:', error);
         }
     });
+    */
+    chrome.storage.sync.get(['blocked'], async function (result) {
+        let blocked = result.blocked || 0;
+        blocked++;
+        chrome.storage.sync.set({ 'blocked': blocked }, async function () { });
+    });
+    showOverlay();
 }
 
 function showOverlay() {
@@ -57,7 +65,7 @@ function showOverlay() {
     overlay.innerHTML = `
         <div id="edublock-overlay" style="${overlayStyle}">
             <div style="${popupStyle}">
-                <h2>This site has been blocked as it is not relevant to your current focus.</h2>
+                <h3 style="${textStyle}">This site has been blocked as it is not relevant to your current focus.</h2>
                 <button style="${buttonStyle}" id="ignoreDomain">Ignore Domain</button>
                 <button style="${buttonStyle}" id="ignoreURL">Ignore URL</button>
             </div>
@@ -95,26 +103,51 @@ const overlayStyle = `
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.7);
     backdrop-filter: blur(5px);
-    z-index: 1000;
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    color: #FFFFFF;
+    text-align: center;
+    font-weight: normal;
+    text-decoration: none;
+    font-style: normal;
+`;
+
+const textStyle = `
+    font-family: 'Arial', sans-serif;
+    font-size: 20px;
+    color: #000000;
+    text-align: center;
+    line-height: 1.5;
+    font-weight: 500;
+    text-decoration: none;
+    font-style: normal;
 `;
 
 const popupStyle = `
-    font-family: Arial, sans-serif;
-    background: white;
+    background-color: #FFFFFF;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     width: 300px;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    color: #000000;
+    text-align: center;
+    line-height: 1.5;
+    font-weight: normal;
+    text-decoration: none;
+    font-style: normal;
 `;
 
 const buttonStyle = `
-    background: #3f51b5;
+    background: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -124,4 +157,12 @@ const buttonStyle = `
     font-size: 16px;
     width: 100%;
     max-width: 200px;
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    color: #ffffff;
+    text-align: center;
+    line-height: 1.5;
+    font-weight: 500;
+    text-decoration: none;
+    font-style: normal;
 `;
