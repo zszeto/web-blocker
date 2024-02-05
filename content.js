@@ -8,21 +8,20 @@ chrome.storage.sync.get(['domainsToIgnore', 'websitesToIgnore'], function (data)
         return; // Do nothing if the URL or domain is in the ignore list
     }
 
-    checkRelevance();
+    // Delay the check to allow the page to load
+    setTimeout(checkRelevance, 1500);
 });
 
 async function checkRelevance() {
-    /*
     chrome.storage.sync.get(['topic', 'apiKey'], async function (result) {
         let pageContent = document.body.innerText;
-        if (pageContent.length > 5000) {
-            pageContent = pageContent.substring(0, 5000);
+        if (pageContent.length > 3000) {
+            pageContent = pageContent.substring(0, 3000);
         }
         const url = window.location.href;
         const topic = result.topic;
         const apiKey = result.apiKey;
-        const prompt = `Is the following text on ${url} relevant to ${topic}? Begin your response with “Yes” or “No” and follow with a justification. \n\n${pageContent}`;
-
+        const prompt = `Is the following webpage content on ${url} relevant to ${topic}? Use information you know about the website and the text itself to inform your answer. Begin your response with “Yes.” or “No.” and follow with a very brief justification. Lean towards considering the content as relevant.\n\n${pageContent}`;
         try {
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
@@ -41,31 +40,27 @@ async function checkRelevance() {
                     max_tokens: 50,
                 })
             });
-
             const data = await response.json();
-            console.log(data);
             if (data.choices && data.choices[0] && data.choices[0].message.content.trim().startsWith("No")) {
-                showOverlay();
+                showOverlay(data.choices[0].message.content.substring(3));
             }
         } catch (error) {
             console.error('Error:', error);
         }
     });
-    */
+}
+
+function showOverlay(reasoning) {
     chrome.storage.sync.get(['blocked'], async function (result) {
         let blocked = result.blocked || 0;
         blocked++;
         chrome.storage.sync.set({ 'blocked': blocked }, async function () { });
     });
-    showOverlay();
-}
-
-function showOverlay() {
     const overlay = document.createElement('div');
     overlay.innerHTML = `
         <div id="edublock-overlay" style="${overlayStyle}">
             <div style="${popupStyle}">
-                <h3 style="${textStyle}">This site has been blocked as it is not relevant to your current focus.</h2>
+                <h3 style="${textStyle}">This site has been blocked as it is not relevant to your current focus. ${reasoning}</h2>
                 <button style="${buttonStyle}" id="ignoreDomain">Ignore Domain</button>
                 <button style="${buttonStyle}" id="ignoreURL">Ignore URL</button>
             </div>
