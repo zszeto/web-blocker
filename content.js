@@ -1,6 +1,8 @@
 // content.js
 
-chrome.storage.sync.get(['domainsToIgnore', 'websitesToIgnore'], function (data) {
+chrome.storage.sync.get(['domainsToIgnore', 'websitesToIgnore', 'icon'], function (data) {
+    chrome.storage.sync.set({ 'icon': 'images/logo.png' }, async function () { });
+    console.log(data.icon); 
     const currentUrl = window.location.href;
     const currentDomain = new URL(currentUrl).hostname;
 
@@ -13,7 +15,8 @@ chrome.storage.sync.get(['domainsToIgnore', 'websitesToIgnore'], function (data)
 });
 
 async function checkRelevance() {
-    chrome.storage.sync.get(['topic', 'apiKey'], async function (result) {
+    chrome.storage.sync.get(['topic', 'apiKey', 'icon'], async function (result) {
+        // Get the content of the page and cut it off at 3000 characters
         let pageContent = document.body.innerText;
         if (pageContent.length > 3000) {
             pageContent = pageContent.substring(0, 3000);
@@ -22,6 +25,7 @@ async function checkRelevance() {
         const topic = result.topic;
         const apiKey = result.apiKey;
         const prompt = `Is the following webpage content on ${url} relevant to ${topic}? Use information you know about the website and the text itself to inform your answer. Begin your response with “Yes.” or “No.” and follow with a very brief justification. Lean towards considering the content as relevant.\n\n${pageContent}`;
+        // Send the prompt to the OpenAI API
         try {
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
@@ -41,8 +45,12 @@ async function checkRelevance() {
                 })
             });
             const data = await response.json();
+            // If the response is "No", show the overlay and change the icon
             if (data.choices && data.choices[0] && data.choices[0].message.content.trim().startsWith("No")) {
                 showOverlay(data.choices[0].message.content.substring(3));
+                chrome.storage.sync.set({ 'icon': 'images/red.png' }, async function () { });
+            } else {
+                chrome.storage.sync.set({ 'icon': 'images/green.png' }, async function () { });
             }
         } catch (error) {
             console.error('Error:', error);
@@ -50,7 +58,9 @@ async function checkRelevance() {
     });
 }
 
+// Creates a blurred overlay with reasoning and override buttons
 function showOverlay(reasoning) {
+    // Increment the blocked count
     chrome.storage.sync.get(['blocked'], async function (result) {
         let blocked = result.blocked || 0;
         blocked++;
@@ -73,6 +83,7 @@ function showOverlay(reasoning) {
 }
 
 function ignoreDomain() {
+    chrome.storage.sync.set({ 'icon': 'images/logo.png' }, async function () { });
     chrome.storage.sync.get(['domainsToIgnore'], function (result) {
         const currentDomain = window.location.hostname;
         const updatedList = [...result.domainsToIgnore, currentDomain];
@@ -83,6 +94,7 @@ function ignoreDomain() {
 }
 
 function ignoreURL() {
+    chrome.storage.sync.set({ 'icon': 'images/logo.png' }, async function () { });
     chrome.storage.sync.get(['websitesToIgnore'], function (result) {
         const currentURL = window.location.href;
         const updatedList = [...result.websitesToIgnore, currentURL];

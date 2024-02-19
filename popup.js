@@ -1,3 +1,4 @@
+//popup.js
 
 document.addEventListener('DOMContentLoaded', loadOptions);
 document.getElementById('saveButton').addEventListener('click', saveTopic);
@@ -13,7 +14,6 @@ document.querySelector('#options').addEventListener('click', function () {
 
 
 function saveTopic() {
-    console.log("options saved");
     var topic = document.getElementById('topic').value;
 
     chrome.storage.sync.set({

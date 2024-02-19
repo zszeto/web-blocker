@@ -1,3 +1,5 @@
+// options.js
+
 // Saves options to chrome.storage
 const saveOptions = () => {
     var topic = document.getElementById('topic').value;

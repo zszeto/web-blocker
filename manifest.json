@@ -8,6 +8,9 @@
     "default_icon": "images/logo.png",
     "default_title": "EduBlock"
   },
+  "background": {
+    "service_worker": "background.js"
+  },
   "permissions": [
     "webRequest",
     "storage",
